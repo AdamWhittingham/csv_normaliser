@@ -54,12 +54,10 @@ Then /^the output should be normalised relative to the largest value$/ do
 end
 
 Then /^the dates should be in the format '(.+)'$/ do |date_format|
-  @expected = <<-EOS.unindent
-    date
-    2012/06/30 15:05:30
-    2012/06/29 00:00:00
-    2012/06/28 04:55:26
-  EOS
+  @expected = "date\n"
+  @dates.each do |date|
+    @expected << "#{date.strftime date_format}" << "\n"
+  end
   @normalised.should == @expected
 end
 
