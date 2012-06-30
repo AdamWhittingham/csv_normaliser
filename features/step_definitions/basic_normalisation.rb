@@ -29,8 +29,13 @@ When /^I call normalise_csv from ruby with a file argument$/ do
   @normalised = normaliser.normalise_csv(@example_input).to_s
 end
 
+When /^I call normalise_csv from the command line with data on stdin$/ do
+  File.open('tmp/test.csv','w') { |file| file.write @example_input }
+  @normalised = %x{cat tmp/test.csv |ruby app/normalise.rb}
+end
+
 class String
-  def unindent 
+  def unindent
     gsub(/^#{scan(/^\s*/).min_by{|l|l.length}}/, "")
   end
 end

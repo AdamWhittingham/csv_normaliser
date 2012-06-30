@@ -36,5 +36,12 @@ end
 
 if __FILE__ == $0
   normaliser = Normaliser.new
-  puts normaliser.normalise_csv ARGF.read
+  if ARGV
+    puts normaliser.normalise_csv ARGF.read
+  else
+    while line = gets.chomp
+      data << line
+    end
+    puts normaliser.normalise_csv data
+  end
 end
