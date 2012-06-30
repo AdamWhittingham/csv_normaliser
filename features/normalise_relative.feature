@@ -15,3 +15,7 @@ Feature: CSV's are normalised relative to the largest value in a column
     When I call normalise_csv from the command line with data on stdin
     Then the output should be normalised relative to the largest value
 
+  Scenario: A CSV file containing dates can be normalised
+    Given an example containing dates
+    When I call normalise_csv from the command line with a file argument
+    Then the output should be normalised relative to the largest value

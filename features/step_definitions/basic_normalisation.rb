@@ -15,6 +15,21 @@ Given /^an example containing integers and floats$/ do
   EOS
 end
 
+Given /^an example containing dates$/ do
+  @example_input = <<-EOS.unindent
+    data a,data b
+    2012/06/30 15:05:30,50.0
+    2012-06-29,33.3333
+    20120628 045526,15.555555
+    EOS
+  @expected = <<-EOS.unindent
+    data a,data b
+    2012/06/30 15:05:30,100.0
+    2012/06/29 00:00:00,66.6666
+    2012/06/28 04:55:26,31.11111
+  EOS
+end
+
 When /^I call normalise_csv from the command line with a file argument$/ do
   File.open('tmp/test.csv','w') { |file| file.write @example_input }
   @normalised = %x{ruby app/normalise.rb tmp/test.csv}

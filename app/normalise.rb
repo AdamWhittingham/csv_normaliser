@@ -12,25 +12,36 @@ class Normaliser
       column_id,column_data = column
       table[column_id] = normalise column_data
     end
-    return table
   end
 
   def normalise data
-      if data.any?{|item| item.is_a? Float}
-        normalise_floats data
-      elsif data.all?{|item| item.is_a? Numeric}
-        normalise_numbers data
+    if data.any?{|item| item.is_a? Float}
+      normalise_floats data
+    elsif data.all?{|item| item.is_a? Numeric}
+      normalise_numbers data
+    else
+      begin
+      if data.all?{|item| DateTime.parse item}
+        normalise_dates data
       end
+      rescue
+        #Column isn't parsable to DateTimes, leave it be
+      end
+    end
   end
 
   def normalise_floats data
-      ratio = 100.0 / data.max
-      data.map {|val| (val*ratio)}
+    ratio = 100.0 / data.max
+    data.map {|val| (val*ratio)}
   end
 
   def normalise_numbers(data, round= true)
-      ratio = 100.0 / data.max
-      data.map {|val| (val*ratio).round}
+    ratio = 100.0 / data.max
+    data.map {|val| (val*ratio).round}
+  end
+
+  def normalise_dates(data, date_format='%Y/%m/%d %H:%M:%S')
+    data.map {|date| DateTime.parse(date).strftime date_format }
   end
 end
 
