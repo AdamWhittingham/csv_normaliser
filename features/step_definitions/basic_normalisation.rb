@@ -1,5 +1,3 @@
-@cli_opts = ''
-
 Given /^an example containing integers and floats$/ do
   @example_input = <<-EOS.unindent
     data a,data b
@@ -30,8 +28,9 @@ Given /^an example containing dates$/ do
     EOS
 end
 
-Given /^I specify the command line option '(.+)'$/ do |cli_opt|
-  @cli_opts << " " << cli_opt
+Given /^I specify the date format option with the format '(.+)'$/ do |date_format|
+  @date_format = date_format
+  @cli_opts = " -d #{@date_format}"
 end
 
 When /^I call normalise_csv from the command line with a file argument$/ do
@@ -54,9 +53,14 @@ Then /^the output should be normalised relative to the largest value$/ do
 end
 
 Then /^the dates should be in the format '(.+)'$/ do |date_format|
+  @date_format = date_format
+  step 'the dates should be in that format'
+end
+
+Then /^the dates should be in that format$/ do
   @expected = "date\n"
   @dates.each do |date|
-    @expected << "#{date.strftime date_format}" << "\n"
+    @expected << "#{date.strftime @date_format}" << "\n"
   end
   @normalised.should == @expected
 end
