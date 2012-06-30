@@ -18,4 +18,10 @@ Feature: CSV's are normalised relative to the largest value in a column
   Scenario: A CSV file containing dates can be normalised
     Given an example containing dates
     When I call normalise_csv from the command line with a file argument
-    Then the output should be normalised relative to the largest value
+    Then the dates should be in the format '%Y/%m/%d %H:%M:%S'
+
+  Scenario: A CSV file containing dates can be normalised to a custom format
+    Given an example containing dates
+    And I specify the command line option '-d %Y%m%d%H%M'
+    When I call normalise_csv from the command line with a file argument
+    Then the dates should be in the format '%Y%m%H%M'
