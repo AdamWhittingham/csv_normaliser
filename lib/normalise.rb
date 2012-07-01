@@ -3,14 +3,18 @@ require 'csv'
 class Normaliser
   def initialize options={}
     @date_format = options[:date_format] || '%Y/%m/%d %H:%M:%S'
-    setup_ratio_function options[:normalise]
+    @ratio_function = get_ratio_function options[:normalise]
+    @normalisers = {:percentage => 100, :degrees => 360}
   end
 
-  def setup_ratio_function mode
-    if mode == :percentage
-      @ratio_function = lambda {|values| 100.0 / values.reduce(:+) }
-    else
-      @ratio_function = lambda {|values| 100.0/values.max}
+  def get_ratio_function mode
+    case mode
+    when :percentage
+      lambda {|values| 100.0 / values.reduce(:+) }
+    when :degrees
+      lambda {|values| 360.0 / values.reduce(:+) }
+    when :relative, nil, null
+      lambda {|values| 100.0/values.max}
     end
   end
 
@@ -23,27 +27,22 @@ class Normaliser
   def parse_table table
     out_table = table.dup
     table.by_col.each do |column|
-      column_id,column_data = column
-      out_table[column_id] = normalise column_data
+      column_id,column_values = column
+      out_table[column_id] = normalise column_values
     end
   end
 
-  def normalise column
-    if column.any?{|item| item.is_a? Float}
-      normalise_numbers column, false
-    elsif column.all?{|item| item.is_a? Numeric}
-      normalise_numbers column
-    else
-      begin
-        if column.all?{|item| DateTime.parse item}
-          normalise_dates column
-        end
-      rescue nil #Column isn't parsable to DateTime, leave it be
-      end
+  def normalise values
+    if values.any?{|item| item.is_a? Float}
+      normalise_numbers values, false
+    elsif values.all?{|item| item.is_a? Numeric}
+      normalise_numbers values
+    elsif values.all?{|item| DateTime.parse item rescue return values}
+      normalise_dates values
     end
   end
 
-  def normalise_numbers values, round= true
+  def normalise_numbers values, round=true
     ratio = @ratio_function.call values
     if round
       values.map {|val| (val * ratio).round}
