@@ -1,0 +1,4 @@
+#! /bin/bash
+pushd $(readlink -f $(dirname $0)) >/dev/null
+ruby ../lib/normalise.rb $@
+popd >/dev/null

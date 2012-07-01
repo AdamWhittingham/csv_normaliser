@@ -56,13 +56,14 @@ end
 if __FILE__ == $0
   options = {}
   OptionParser.new do |opts|
-    opts.banner = "Usage: $0 [options] [file]"
+    opts.banner = "Usage: #{$0} [options] [file]"
     opts.on("-d", "--date-format FORMAT", "date format to normalise dates to") do |format| 
       options[:date_format] = format
     end
-    #opts.on("-h", "--[no-]headers", "Determine whether or not the first row is counted as a header") do |no_header|
-      #options[:header] = !no_header
-    #end
+    opts.on_tail("-h", "--help", "Show this message") do
+        puts opts
+        exit
+      end
   end.parse!
 
   if options[:date_format]
@@ -74,9 +75,7 @@ if __FILE__ == $0
   if ARGV
     puts normaliser.normalise_csv ARGF.read
   else
-    while line = gets.chomp
-      data << line
-    end
+    data << line while line = gets.chomp
     puts normaliser.normalise_csv data if data
   end
 end

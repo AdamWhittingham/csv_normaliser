@@ -1,5 +1,10 @@
 Feature: CSV's are normalised relative to the largest value in a column
 
+  As someone with a CSV of numbers and dates
+  I want to normalise the data
+  So that the ratio/shape of the data is the same
+  and the exact detail is hidden
+
   Scenario: A CSV file can be normalised by column
     Given an example containing integers and floats
     When I call normalise_csv from the command line with a file argument

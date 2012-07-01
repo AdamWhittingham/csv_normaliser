@@ -35,7 +35,7 @@ end
 
 When /^I call normalise_csv from the command line with a file argument$/ do
   File.open('tmp/test.csv','w') { |file| file.write @example_input}
-  @normalised = %x{ruby app/normalise.rb tmp/test.csv#{@cli_opts}}
+  @normalised = %x{ruby lib/normalise.rb tmp/test.csv#{@cli_opts}}
 end
 
 When /^I call normalise_csv from ruby with a file argument$/ do
@@ -45,7 +45,7 @@ end
 
 When /^I call normalise_csv from the command line with data on stdin$/ do
   File.open('tmp/test.csv','w') { |file| file.write @example_input }
-  @normalised = %x{cat tmp/test.csv |ruby app/normalise.rb}
+  @normalised = %x{cat tmp/test.csv |ruby lib/normalise.rb}
 end
 
 Then /^the output should be normalised relative to the largest value$/ do
