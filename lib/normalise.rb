@@ -9,13 +9,14 @@ class Normaliser
   def normalise_csv (input, headers=true)
     csv_options= [:headers => headers, :write_headers => headers, :header_converters => nil, :converters => :all]
     data_array = CSV.parse input, *csv_options
-    table = parse_table CSV::Table.new data_array
+    parse_table CSV::Table.new data_array
   end
 
   def parse_table table
+    out_table = table.dup
     table.by_col.each do |column|
       column_id,column_data = column
-      table[column_id] = normalise column_data
+      out_table[column_id] = normalise column_data
     end
   end
 
@@ -26,9 +27,9 @@ class Normaliser
       normalise_numbers data
     else
       begin
-      if data.all?{|item| DateTime.parse item}
-        normalise_dates data
-      end
+        if data.all?{|item| DateTime.parse item}
+          normalise_dates data
+        end
       rescue nil #Column isn't parsable to DateTime, leave it be
       end
     end
@@ -57,13 +58,10 @@ if __FILE__ == $0
   options = {}
   OptionParser.new do |opts|
     opts.banner = "Usage: #{$0} [options] [file]"
-    opts.on("-d", "--date-format FORMAT", "date format to normalise dates to") do |format| 
+    opts.on("-d", "--date-format FORMAT", "Linux/Ruby date format to convert to (eg. '%Y/%m/%d %H:%M:%S')") do |format|
       options[:date_format] = format
     end
-    opts.on_tail("-h", "--help", "Show this message") do
-        puts opts
-        exit
-      end
+    opts.on_tail("-h", "--help", "-?", "Show this message") {puts opts; exit}
   end.parse!
 
   if options[:date_format]
