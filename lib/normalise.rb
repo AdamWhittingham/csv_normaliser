@@ -3,6 +3,15 @@ require 'csv'
 class Normaliser
   def initialize options={}
     @date_format = options[:date_format] || '%Y/%m/%d %H:%M:%S'
+    setup_ratio_function options[:normalise]
+  end
+
+  def setup_ratio_function mode
+    if mode == :percentage
+      @ratio_function = lambda {|values| 100.0 / values.reduce(:+) }
+    else
+      @ratio_function = lambda {|values| 100.0/values.max}
+    end
   end
 
   def normalise_csv (input, headers=true)
@@ -19,36 +28,31 @@ class Normaliser
     end
   end
 
-  def normalise data
-    if data.any?{|item| item.is_a? Float}
-      normalise_floats data
-    elsif data.all?{|item| item.is_a? Numeric}
-      normalise_numbers data
+  def normalise column
+    if column.any?{|item| item.is_a? Float}
+      normalise_numbers column, false
+    elsif column.all?{|item| item.is_a? Numeric}
+      normalise_numbers column
     else
       begin
-        if data.all?{|item| DateTime.parse item}
-          normalise_dates data
+        if column.all?{|item| DateTime.parse item}
+          normalise_dates column
         end
       rescue nil #Column isn't parsable to DateTime, leave it be
       end
     end
   end
 
-  def relative_ratio data
-    100.0 / data.max
+  def normalise_numbers values, round= true
+    ratio = @ratio_function.call values
+    if round
+      values.map {|val| (val * ratio).round}
+    else
+      values.map {|val| (val * ratio)}
+    end
   end
 
-  def normalise_floats data
-    ratio = relative_ratio data
-    data.map {|val| (val*ratio)}
-  end
-
-  def normalise_numbers(data, round= true)
-    ratio = relative_ratio data
-    data.map {|val| (val*ratio).round}
-  end
-
-  def normalise_dates(data)
-    data.map {|date| DateTime.parse(date).strftime @date_format }
+  def normalise_dates values
+    values.map {|date| DateTime.parse(date).strftime @date_format }
   end
 end
