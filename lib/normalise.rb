@@ -1,5 +1,4 @@
 require 'csv'
-require 'optparse'
 
 class Normaliser
   def initialize options={}
@@ -52,18 +51,4 @@ class Normaliser
   def normalise_dates(data)
     data.map {|date| DateTime.parse(date).strftime @date_format }
   end
-end
-
-if __FILE__ == $0
-  options = {}
-  OptionParser.new do |opts|
-    opts.banner = "Usage: #{$0} [options] [file]"
-    opts.on("-d", "--date-format FORMAT", "Linux/Ruby date format to convert to (eg. '%Y/%m/%d %H:%M:%S')") do |format|
-      options[:date_format] = format
-    end
-    opts.on_tail("-h", "--help", "-?", "Show this message") {puts opts; exit}
-  end.parse!
-
-  normaliser = Normaliser.new options
-  puts normaliser.normalise_csv ARGF.read
 end

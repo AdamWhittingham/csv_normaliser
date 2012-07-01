@@ -1,4 +1,19 @@
-#! /bin/bash
-pushd $(readlink -f $(dirname $0)) >/dev/null
-ruby ../lib/normalise.rb $@
-popd >/dev/null
+#!/usr/bin/env ruby
+require 'optparse'
+
+lib_dir = File.join(File.dirname(__FILE__), '..', 'lib')
+$LOAD_PATH.unshift lib_dir if File.directory?(lib_dir)
+
+require 'normalise.rb'
+
+options = {}
+OptionParser.new do |opts|
+  opts.banner = "Usage: #{$0} [options] [file]"
+  opts.on("-d", "--date-format FORMAT", "Linux/Ruby date format to convert to (eg. '%Y/%m/%d %H:%M:%S')") do |format|
+    options[:date_format] = format
+  end
+  opts.on_tail("-h", "--help", "-?", "Show this message") {puts opts; exit}
+end.parse!
+
+normaliser = Normaliser.new options
+puts normaliser.normalise_csv ARGF.read

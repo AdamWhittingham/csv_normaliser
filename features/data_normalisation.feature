@@ -14,11 +14,11 @@ Feature: Data can be normalised
 
   Scenario: Dates can be normalised to the same format
     Given an example containing dates
-    When I call normalise_csv from the command line with a file argument
+    When I call from the command line with a test file
     Then the dates should be in the format '%Y/%m/%d %H:%M:%S'
 
   Scenario: Dates can be normalised to a custom format
     Given an example containing dates
     And I specify the date format option with the format '%Y%m%d%H%M'
-    When I call normalise_csv from the command line with a file argument
+    When I call from the command line with a test file
     Then the dates should be in that format

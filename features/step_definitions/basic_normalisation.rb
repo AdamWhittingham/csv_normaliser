@@ -33,19 +33,19 @@ Given /^I specify the date format option with the format '(.+)'$/ do |date_forma
   @cli_opts = " -d #{@date_format}"
 end
 
-When /^I call normalise_csv from the command line with a file argument$/ do
+When /^I call from the command line with a test file$/ do
   File.open('tmp/test.csv','w') { |file| file.write @example_input}
-  @normalised = %x{ruby lib/normalise.rb tmp/test.csv#{@cli_opts}}
+  @normalised = %x{bin/csv_normalise tmp/test.csv#{@cli_opts}}
 end
 
-When /^I call normalise_csv from ruby with a file argument$/ do
+When /^I call from ruby with a test file$/ do
   normaliser = Normaliser.new
   @normalised = normaliser.normalise_csv(@example_input).to_s
 end
 
-When /^I call normalise_csv from the command line with data on stdin$/ do
+When /^I call from the command line with data on stdin$/ do
   File.open('tmp/test.csv','w') { |file| file.write @example_input }
-  @normalised = %x{cat tmp/test.csv |ruby lib/normalise.rb}
+  @normalised = %x{cat tmp/test.csv |bin/csv_normalise}
 end
 
 Then /^the output should be normalised relative to the largest value$/ do

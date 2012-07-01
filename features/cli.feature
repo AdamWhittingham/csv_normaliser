@@ -15,3 +15,8 @@ Feature: Command Line Interface is available and documented
       | --help      |
       | -?          |
 
+    #@announce
+  #Scenario: Date format can be specified on the command line
+    #Given an example containing dates
+    #When I run `csv_normalise -d "%Y-%m-%d %H.%M.%S" ../tmp/test.csv`
+    #Then the dates should be in the format '%Y-%m-%d %H.%M.%S' 
