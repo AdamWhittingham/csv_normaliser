@@ -2,8 +2,8 @@ require 'csv'
 require 'optparse'
 
 class Normaliser
-  def initialize date_format = '%Y/%m/%d %H:%M:%S'
-    @date_format = date_format
+  def initialize options={}
+    @date_format = options[:date_format] || '%Y/%m/%d %H:%M:%S'
   end
 
   def normalise_csv (input, headers=true)
@@ -64,16 +64,6 @@ if __FILE__ == $0
     opts.on_tail("-h", "--help", "-?", "Show this message") {puts opts; exit}
   end.parse!
 
-  if options[:date_format]
-    normaliser = Normaliser.new options[:date_format]
-  else
-    normaliser = Normaliser.new
-  end
-
-  if ARGV
-    puts normaliser.normalise_csv ARGF.read
-  else
-    data << line while line = gets.chomp
-    puts normaliser.normalise_csv data if data
-  end
+  normaliser = Normaliser.new options
+  puts normaliser.normalise_csv ARGF.read
 end
