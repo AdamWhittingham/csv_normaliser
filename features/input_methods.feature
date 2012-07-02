@@ -6,12 +6,12 @@ Feature: The library can be used through multiple interfaces
 
   Scenario: File input can be normalised by column
     Given an example containing integers and floats
-    When I call from the command line with a test file
+    When I call from the command line with the test file
     Then the output should be normalised relative to the largest value
 
   Scenario: String input can be normalised by column
     Given an example containing integers and floats
-    When I call from ruby with a test file
+    When I call from ruby with the test file
     Then the output should be normalised relative to the largest value
 
   Scenario: STDIN input can be normalised by column

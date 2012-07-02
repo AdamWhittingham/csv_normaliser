@@ -42,12 +42,29 @@ Given /^I specify the date format option with the format '(.+)'$/ do |date_forma
   @cli_opts = " -d #{@date_format}"
 end
 
-When /^I call from the command line with a test file$/ do
+Given /^an example csv$/ do
+  @example_input = <<-EOS.unindent
+  data a, data b
+  20.0,160
+  30.0,40
+  EOS
+end
+
+When /^I set no options$/ do
+  @expected = <<-EOS.unindent
+  data a, data b
+  66.66666666666667,100
+  100.0,25
+  EOS
+  @cli_opts = ''
+end
+
+When /^I call from the command line with the test file$/ do
   File.open('tmp/test.csv','w') { |file| file.write @example_input}
   @normalised = %x{bin/csv_normalise tmp/test.csv#{@cli_opts}}
 end
 
-When /^I call from ruby with a test file$/ do
+When /^I call from ruby with the test file$/ do
   normaliser = Normaliser.new
   @normalised = normaliser.normalise_csv(@example_input).to_s
 end
@@ -55,6 +72,10 @@ end
 When /^I call from the command line with data on stdin$/ do
   File.open('tmp/test.csv','w') { |file| file.write @example_input }
   @normalised = %x{cat tmp/test.csv |bin/csv_normalise}
+end
+
+When /^I set the '(.+)' option$/ do |opt|
+  @cli_opts=" #{opt}"
 end
 
 Then /^the output should be normalised relative to the largest value$/ do
@@ -76,6 +97,24 @@ end
 
 Then /^everything should be the same$/ do
   @normalised.should == @example_input
+end
+
+Then /^the output should be normalised into percentages$/ do
+  @expected = <<-EOE.unindent
+  data a, data b
+  40.0,80
+  60.0,20
+  EOE
+  @normalised.should == @expected
+end
+
+Then /^the output should be normalised into degrees$/ do
+  @expected = <<-EOE.unindent
+  data a, data b
+  144.0,288
+  216.0,72
+  EOE
+  @normalised.should == @expected
 end
 
 class String

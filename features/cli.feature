@@ -1,4 +1,4 @@
-Feature: Command Line Interface is available and documented 
+Feature: Command Line Interface is available and documented
 
   As a user
   I want to normalise data from the command line
@@ -19,4 +19,34 @@ Feature: Command Line Interface is available and documented
   #Scenario: Date format can be specified on the command line
     #Given an example containing dates
     #When I run `csv_normalise -d "%Y-%m-%d %H.%M.%S" ../tmp/test.csv`
-    #Then the dates should be in the format '%Y-%m-%d %H.%M.%S' 
+    #Then the dates should be in the format '%Y-%m-%d %H.%M.%S'
+
+  Scenario: Realative normalisation is the default
+    Given an example csv
+    When I set no options
+    And I call from the command line with the test file
+    Then the output should be normalised relative to the largest value
+
+  Scenario: Percentage normalisation can be used
+    Given an example csv
+    When I set the '-p' option
+    And I call from the command line with the test file
+    Then the output should be normalised into percentages
+
+  Scenario: Percentage normalisation can be used with the full switch
+    Given an example csv
+    When I set the '--percentage' option
+    And I call from the command line with the test file
+    Then the output should be normalised into percentages
+
+  Scenario: Degree normalisation can be used
+    Given an example csv
+    When I set the '-e' option
+    And I call from the command line with the test file
+    Then the output should be normalised into degrees
+
+  Scenario: Degree normalisation can be used with the full switch
+    Given an example csv
+    When I set the '--degrees' option
+    And I call from the command line with the test file
+    Then the output should be normalised into degrees
