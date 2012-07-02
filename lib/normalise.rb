@@ -4,10 +4,9 @@ class Normaliser
   def initialize options={}
     @date_format = options[:date_format] || '%Y/%m/%d %H:%M:%S'
     @ratio_function = get_ratio_function options[:normalise]
-    @normalisers = {:percentage => 100, :degrees => 360}
   end
 
-  def get_ratio_function mode
+  private def get_ratio_function mode
     case mode
     when :percentage
       lambda {|values| 100.0 / values.reduce(:+) }

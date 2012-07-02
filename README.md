@@ -15,7 +15,8 @@ to have them pointed out in a short email or pull request, I'd like to improve!
 
 Installation
 ------------
-Clone the repository and get to it- everything is core Ruby 1.9 (1.9.2-p290 to be exact)
+Clone the repository and get to it- everything is core Ruby 1.9
+Ultimately I'll try to turn this into a gem with the command line interface added to the path.
 
 Usage
 -----
