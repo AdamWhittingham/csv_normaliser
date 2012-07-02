@@ -6,7 +6,7 @@ class Normaliser
     @ratio_function = get_ratio_function options[:normalise]
   end
 
-  private def get_ratio_function mode
+  def get_ratio_function mode
     case mode
     when :percentage
       lambda {|values| 100.0 / values.reduce(:+) }
