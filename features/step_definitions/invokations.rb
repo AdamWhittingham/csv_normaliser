@@ -13,6 +13,7 @@ Given /^an example containing integers and floats$/ do
     75,31.11111
     100,6.66666
   EOS
+  File.open('tmp/test.csv','w') { |file| file.write @example_input}
 end
 
 Given /^an example containing dates$/ do
@@ -26,6 +27,7 @@ Given /^an example containing dates$/ do
     #{@dates[1].strftime('%Y-%m-%d')}
     #{@dates[2].strftime('%Y%m%d %H%M%S')}
     EOS
+  File.open('tmp/test.csv','w') { |file| file.write @example_input}
 end
 
 Given /^an example containing plain text$/ do
@@ -35,6 +37,7 @@ Given /^an example containing plain text$/ do
     text 2, testB
     text 3, testC
     EOS
+  File.open('tmp/test.csv','w') { |file| file.write @example_input}
 end
 
 Given /^I specify the date format option with the format '(.+)'$/ do |date_format|
@@ -48,6 +51,7 @@ Given /^an example csv$/ do
   20.0,160
   30.0,40
   EOS
+  File.open('tmp/test.csv','w') { |file| file.write @example_input}
 end
 
 When /^I set no options$/ do
@@ -60,7 +64,6 @@ When /^I set no options$/ do
 end
 
 When /^I call from the command line with the test file$/ do
-  File.open('tmp/test.csv','w') { |file| file.write @example_input}
   @normalised = %x{bin/csv_normalise tmp/test.csv#{@cli_opts}}
 end
 
@@ -80,6 +83,13 @@ end
 
 Then /^the output should be normalised relative to the largest value$/ do
   @normalised.should == @expected
+end
+
+Then /^the dates output should be in the format "(.*)"$/ do |date_format|
+  @date_format = date_format
+  @dates.each do |date|
+    step "the output should contain \"#{date.strftime @date_format}\""
+  end
 end
 
 Then /^the dates should be in the format '(.+)'$/ do |date_format|
